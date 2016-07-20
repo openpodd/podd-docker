@@ -1,0 +1,66 @@
+version: '2'
+services:
+  podd_cep:
+    build: cep/
+    ports:
+      - 38080:8080
+  redis:
+    image: redis
+    ports:
+      - 36379:6379
+  sentry_redis:
+    image: redis
+  sentry_postgres:
+    image: postgres
+    env_file:
+      - ./env/postgres.sh
+    volumes:
+      - /data/sentry_postgres/:/var/lib/postgresql/data/
+  sentry:
+    image: sentry
+    ports:
+      - 39000:9000
+    env_file:
+      - ./env/sentry.sh
+    links:
+      - sentry_redis:redis
+      - sentry_postgres:postgres
+  sentry_worker:
+    image: sentry
+    env_file:
+      - ./env/sentry.sh
+    links:
+      - sentry_redis:redis
+      - sentry_postgres:postgres
+    command: "run worker"
+  sentry_cron:
+    image: sentry
+    env_file:
+      - ./env/sentry.sh
+    links:
+      - sentry_redis:redis
+      - sentry_postgres:postgres
+    command: "run cron"
+  postgis:
+    image: mdillon/postgis
+    ports:
+      - 35432:5432
+    env_file:
+      - ./env/postgres.sh
+    volumes:
+      - /data/postgis/:/var/lib/postgresql/data/
+  elasticsearch:
+    image: elasticsearch:1.7
+    ports:
+      - 39200:9200
+    volumes:
+      - /data/elasticsearch/:/usr/share/elasticsearch/data/
+  neo4j:
+    image: neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - /data/neo4j/:/data/
+    environment:
+      - NEO4J_AUTH=none

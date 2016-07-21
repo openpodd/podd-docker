@@ -1,7 +1,21 @@
 version: '2'
 services:
+  podd_api:
+    build: ${PODD_API_DIR}
+    env_file:
+      - ./env/podd_api.sh
+    ports:
+      - 38000:8000
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - redis
+      - postgis:postgres
+      - neo4j
+      - elasticsearch
+      - podd_cep
   podd_cep:
-    build: cep/
+    build: podd_cep/
     ports:
       - 38080:8080
   redis:
@@ -58,8 +72,8 @@ services:
   neo4j:
     image: neo4j
     ports:
-      - 7474:7474
-      - 7687:7687
+      - 37474:7474
+      - 37687:7687
     volumes:
       - /data/neo4j/:/data/
     environment:

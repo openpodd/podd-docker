@@ -4,8 +4,47 @@ services:
     build: ${PODD_API_DIR}
     env_file:
       - ./env/podd_api.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     ports:
-      - 38000:8000
+      - 8000:8000
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - redis
+      - postgis:postgres
+      - neo4j
+      - elasticsearch
+      - podd_cep
+    extra_hosts:
+      - "docker:${DOCKER_HOST_IP}"
+  podd_api_celery_worker:
+    build: ${PODD_API_DIR}
+    command: celery worker -A podd -l INFO
+    env_file:
+      - ./env/podd_api.sh
+      - ./env/podd_api_celery.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - redis
+      - postgis:postgres
+      - neo4j
+      - elasticsearch
+      - podd_cep
+  podd_api_celery_beat:
+    build: ${PODD_API_DIR}
+    command: celery beat -A podd -l INFO
+    env_file:
+      - ./env/podd_api.sh
+      - ./env/podd_api_celery.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
     links:
@@ -16,65 +55,26 @@ services:
       - podd_cep
   podd_cep:
     build: podd_cep/
-    ports:
-      - 38080:8080
   redis:
     image: redis
-    ports:
-      - 36379:6379
-  sentry_redis:
-    image: redis
-  sentry_postgres:
-    image: postgres
-    env_file:
-      - ./env/postgres.sh
-    volumes:
-      - /data/sentry_postgres/:/var/lib/postgresql/data/
-  sentry:
-    image: sentry
-    ports:
-      - 39000:9000
-    env_file:
-      - ./env/sentry.sh
-    links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
-  sentry_worker:
-    image: sentry
-    env_file:
-      - ./env/sentry.sh
-    links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
-    command: "run worker"
-  sentry_cron:
-    image: sentry
-    env_file:
-      - ./env/sentry.sh
-    links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
-    command: "run cron"
   postgis:
     image: mdillon/postgis
     ports:
-      - 35432:5432
+      - 5432:5432
     env_file:
       - ./env/postgres.sh
     volumes:
-      - /data/postgis/:/var/lib/postgresql/data/
+      - data:/var/lib/postgresql/data/pgdata
   elasticsearch:
-    image: elasticsearch:1.7
-    ports:
-      - 39200:9200
+    build: podd_elasticsearch
     volumes:
-      - /data/elasticsearch/:/usr/share/elasticsearch/data/
+      - data:/usr/share/elasticsearch/data/
   neo4j:
     image: neo4j
-    ports:
-      - 37474:7474
-      - 37687:7687
     volumes:
-      - /data/neo4j/:/data/
+      - data:/data/
     environment:
       - NEO4J_AUTH=none
+volumes:
+  data:
+    external: true

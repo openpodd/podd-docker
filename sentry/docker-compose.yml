@@ -1,13 +1,13 @@
 version: '2'
 services:
-  sentry_redis:
+  redis:
     image: redis
-  sentry_postgres:
-    image: postgres
+  postgres:
+    build: sentry_postgres
     env_file:
       - ../env/postgres.sh
     volumes:
-      - data:/var/lib/postgresql/data/pgdata
+      - sentry_postgres:/var/lib/postgresql/data/pgdata
   sentry:
     image: sentry
     ports:
@@ -15,24 +15,25 @@ services:
     env_file:
       - ./env/sentry.sh
     links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
+      - redis
+      - postgres
   sentry_worker:
     image: sentry
     env_file:
       - ./env/sentry.sh
     links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
+      - redis
+      - postgres
     command: "run worker"
   sentry_cron:
     image: sentry
     env_file:
       - ./env/sentry.sh
     links:
-      - sentry_redis:redis
-      - sentry_postgres:postgres
+      - redis
+      - postgres
     command: "run cron"
+
 volumes:
-  data:
-    external: true
+  sentry_postgres:
+    external: false

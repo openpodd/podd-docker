@@ -1,0 +1,4 @@
+export PODD_API_DIR=
+export PODD_DJANGO_SECRET_KEY=
+export PODD_RAVEN_DSN=
+

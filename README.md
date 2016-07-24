@@ -24,7 +24,7 @@ git lfs(large-file-system), docker, docker compose
 ### Preparation
 Set environment variables:
   0. VM memory 3G is recommended.
-  1. Create named volumes by run `docker volume create --name data`.
+  1. Create named volumes by run `docker volume create --name podd_data`.
   2. `PODD_API_DIR` point to current working Django directory.
   3. `PODD_DJANGO_SECRET_KEY`
   4. `PODD_RAVEN_DSN`, optional, if you really want to connect with sentry. Go to docker-host:9000 first to get the DSN.

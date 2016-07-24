@@ -1,7 +1,8 @@
 version: '2'
 services:
-  podd_api:
+  api:
     build: ${PODD_API_DIR}
+    image: podd-docker/api:latest
     env_file:
       - ./env/podd_api.sh
     environment:
@@ -13,14 +14,14 @@ services:
       - ${PODD_API_DIR}:/usr/src/app
     links:
       - redis
-      - postgis:postgres
+      - postgres
       - neo4j
       - elasticsearch
-      - podd_cep
+      - cep
     extra_hosts:
       - "docker:${DOCKER_HOST_IP}"
-  podd_api_celery_worker:
-    build: ${PODD_API_DIR}
+  celery_worker:
+    image: podd-docker/api:latest
     command: celery worker -A podd -l INFO
     env_file:
       - ./env/podd_api.sh
@@ -30,14 +31,8 @@ services:
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
-    links:
-      - redis
-      - postgis:postgres
-      - neo4j
-      - elasticsearch
-      - podd_cep
-  podd_api_celery_beat:
-    build: ${PODD_API_DIR}
+  celery_beat:
+    image: podd-docker/api:latest
     command: celery beat -A podd -l INFO
     env_file:
       - ./env/podd_api.sh
@@ -47,34 +42,33 @@ services:
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
-    links:
-      - redis
-      - postgis:postgres
-      - neo4j
-      - elasticsearch
-      - podd_cep
-  podd_cep:
+  cep:
     build: podd_cep/
   redis:
     image: redis
-  postgis:
-    image: mdillon/postgis
+  postgres:
+    build: podd_postgres
     ports:
       - 5432:5432
     env_file:
       - ./env/postgres.sh
     volumes:
-      - data:/var/lib/postgresql/data/pgdata
+      - podd_postgres:/var/lib/postgresql/data/pgdata
   elasticsearch:
     build: podd_elasticsearch
     volumes:
-      - data:/usr/share/elasticsearch/data/
+      - podd_elasticsearch:/usr/share/elasticsearch/data/
   neo4j:
     image: neo4j
     volumes:
-      - data:/data/
+      - podd_neo4j:/data/
     environment:
       - NEO4J_AUTH=none
+
 volumes:
-  data:
-    external: true
+  podd_postgres:
+    external: false
+  podd_elasticsearch:
+    external: false
+  podd_neo4j:
+    external: false

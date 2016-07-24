@@ -1,19 +1,15 @@
 version: '2'
 services:
   podd_cep:
-    extends: docker-compose.yml
     ports:
       - 8080:8080
   redis:
-    extends: docker-compose.yml
     ports:
       - 6379:6379
   elasticsearch:
-    extends: docker-compose.yml
     ports:
       - 9200:9200
   neo4j:
-    extends: docker-compose.yml
     ports:
       - 7474:7474
       - 7687:7687

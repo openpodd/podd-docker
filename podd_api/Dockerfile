@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY podd/settings/docker-template.py podd/settings/docker.py
+# COPY podd/settings/docker-template.py podd/settings/docker.py
 ONBUILD RUN pip install -r requirements.txt
 
 VOLUME /usr/src/app

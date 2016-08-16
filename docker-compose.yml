@@ -2,7 +2,7 @@ version: '2'
 services:
   api:
     build: ${PODD_API_DIR}
-    image: podd-docker/api:latest
+    image: noomz/podd-api:latest
     env_file:
       - ./env/podd_api.sh
     environment:
@@ -18,10 +18,8 @@ services:
       - neo4j
       - elasticsearch
       - cep
-    extra_hosts:
-      - "docker:${DOCKER_HOST_IP}"
   celery_worker:
-    image: podd-docker/api:latest
+    image: noomz/podd-api:latest
     command: celery worker -A podd -l INFO
     env_file:
       - ./env/podd_api.sh
@@ -32,7 +30,7 @@ services:
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
   celery_beat:
-    image: podd-docker/api:latest
+    image: noomz/podd-api:latest
     command: celery beat -A podd -l INFO
     env_file:
       - ./env/podd_api.sh
@@ -44,10 +42,11 @@ services:
       - ${PODD_API_DIR}:/usr/src/app
   cep:
     build: podd_cep/
+    image: noomz/podd-cep:latest
   redis:
     image: redis
   postgres:
-    build: podd_postgres
+    image: mdillon/postgis
     ports:
       - 5432:5432
     env_file:
@@ -56,6 +55,7 @@ services:
       - podd_postgres:/var/lib/postgresql/data/pgdata
   elasticsearch:
     build: podd_elasticsearch
+    image: noomz/elasticsearch:1.7
     volumes:
       - podd_elasticsearch:/usr/share/elasticsearch/data/
   neo4j:

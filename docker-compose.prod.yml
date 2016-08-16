@@ -1,0 +1,85 @@
+version: '2'
+services:
+  nginx:
+    build: nginx/
+    image: noomz/podd-nginx:latest
+    links:
+      - api
+    ports:
+      - 8000:80
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+  api:
+    build:
+      context: ${PODD_API_DIR}
+      dockerfile: Dockerfile-production
+    image: noomz/podd-api:latest
+    env_file:
+      - ./env/podd_api.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+    ports:
+      - 9001
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - redis
+      - postgres
+      - neo4j
+      - elasticsearch
+      - cep
+  celery_worker:
+    image: noomz/podd-api:latest
+    command: celery worker -A podd -l INFO
+    env_file:
+      - ./env/podd_api.sh
+      - ./env/podd_api_celery.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+  celery_beat:
+    image: noomz/podd-api:latest
+    command: celery beat -A podd -l INFO
+    env_file:
+      - ./env/podd_api.sh
+      - ./env/podd_api_celery.sh
+    environment:
+      - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
+      - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+    volumes:
+      - ${PODD_API_DIR}:/usr/src/app
+  cep:
+    build: podd_cep/
+    image: noomz/podd-cep:latest
+  redis:
+    image: redis
+  postgres:
+    image: mdillon/postgis
+    ports:
+      - 5432:5432
+    env_file:
+      - ./env/postgres.sh
+    volumes:
+      - podd_postgres:/var/lib/postgresql/data/pgdata
+  elasticsearch:
+    build: podd_elasticsearch
+    image: noomz/elasticsearch:1.7
+    volumes:
+      - podd_elasticsearch:/usr/share/elasticsearch/data/
+  neo4j:
+    image: neo4j
+    volumes:
+      - podd_neo4j:/data/
+    environment:
+      - NEO4J_AUTH=none
+
+volumes:
+  podd_postgres:
+    external: false
+  podd_elasticsearch:
+    external: false
+  podd_neo4j:
+    external: false

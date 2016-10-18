@@ -20,7 +20,7 @@ services:
       - cep
   celery_worker:
     image: noomz/podd-api:latest
-    command: celery worker -A podd -l INFO
+    command: celery worker -A podd -l INFO -f /usr/src/app/cworker.log
     env_file:
       - ./env/podd_api.sh
       - ./env/podd_api_celery.sh
@@ -29,9 +29,11 @@ services:
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - cep
   celery_beat:
     image: noomz/podd-api:latest
-    command: celery beat -A podd -l INFO
+    command: celery beat -A podd -l INFO -f /usr/src/app/cbeat.log
     env_file:
       - ./env/podd_api.sh
       - ./env/podd_api_celery.sh
@@ -40,11 +42,15 @@ services:
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
+    links:
+      - cep
   cep:
     build: podd_cep/
     image: noomz/podd-cep:latest
   redis:
     image: redis
+    ports:
+      - 6379
   postgres:
     image: mdillon/postgis
     ports:

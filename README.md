@@ -48,3 +48,9 @@ You have 2 options. First, Load current data to postgresql.
 
 Or init the bare backend.
   1. `docker-compose run api python manage.py migrate`
+
+
+## Plan
+1. [ ] Add uwsgi service for production
+2. [ ] Include nodejs-related services.
+3. [ ] Add nginx for easy proxy setup.

@@ -2,3 +2,5 @@
 .swp
 .envset
 envset.sh
+.env
+docker-compose.override.yml

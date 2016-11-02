@@ -3,7 +3,7 @@ services:
   redis:
     image: redis
   postgres:
-    build: sentry_postgres
+    image: postgres
     env_file:
       - ../env/postgres.sh
     volumes:
@@ -11,7 +11,7 @@ services:
   sentry:
     image: sentry
     ports:
-      - 9000:9000
+      - 9000
     env_file:
       - ./env/sentry.sh
     links:

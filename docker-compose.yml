@@ -9,7 +9,7 @@ services:
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
     ports:
-      - 8000:8000
+      - 8000
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
     links:

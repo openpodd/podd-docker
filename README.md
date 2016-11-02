@@ -2,6 +2,22 @@
 Make development or deployment easier with docker. Now support only PODD backend
 related services. For front-end development will coming soon.
 
+### Note about included services.
+Available services:
+  - api
+  - celery worker
+  - celery beat
+  - elasticsearch
+  - neo4j
+  - postgis
+  - redis
+  - cep
+
+TO-DO:
+  - Add podd-quiz.
+  - Add podd-registration.
+  - Add podd-rabies-connect.
+
 ### Prerequisites
 git lfs, docker, docker-compose >= 1.8
 
@@ -32,19 +48,3 @@ You have 2 options. First, Load current data to postgresql.
 
 Or init the bare backend.
   1. `docker-compose run api python manage.py migrate`
-
-### Note to self
-Available services:
-  - api
-  - celery worker
-  - celery beat
-  - elasticsearch
-  - neo4j
-  - postgis
-  - redis
-  - cep
-
-TO-DO:
-  - Add podd-quiz.
-  - Add podd-registration.
-  - Add podd-rabies-connect.

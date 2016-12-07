@@ -33,7 +33,7 @@ services:
       - cep
   celery_beat:
     image: noomz/podd-api:latest
-    command: celery beat -A podd -l INFO -f /usr/src/app/cbeat.log
+    command: celery beat --pidfile= -A podd -l INFO -f /usr/src/app/cbeat.log
     env_file:
       - ./env/podd_api.sh
       - ./env/podd_api_celery.sh

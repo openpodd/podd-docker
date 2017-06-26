@@ -8,6 +8,7 @@ services:
     environment:
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+      - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}
     ports:
       - 8000
     volumes:
@@ -18,6 +19,9 @@ services:
       - neo4j
       - elasticsearch
       - cep
+    logging:
+      options:
+        max-size: "100K"
   celery_worker:
     image: noomz/podd-api:latest
     command: celery worker -A podd -l INFO -f /usr/src/app/cworker.log
@@ -27,10 +31,14 @@ services:
     environment:
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+      - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
     links:
       - cep
+    logging:
+      options:
+        max-size: "100K"
   celery_beat:
     image: noomz/podd-api:latest
     command: celery beat --pidfile= -A podd -l INFO -f /usr/src/app/cbeat.log
@@ -40,17 +48,27 @@ services:
     environment:
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
+      - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}
     volumes:
       - ${PODD_API_DIR}:/usr/src/app
     links:
       - cep
+    logging:
+      options:
+        max-size: "100K"
   cep:
     build: podd_cep/
     image: noomz/podd-cep:latest
+    logging:
+      options:
+        max-size: "100K"
   redis:
     image: redis
     ports:
       - 6379
+    logging:
+      options:
+        max-size: "100K"
   postgres:
     image: mdillon/postgis
     ports:
@@ -59,17 +77,26 @@ services:
       - ./env/postgres.sh
     volumes:
       - podd_postgres:/var/lib/postgresql/data/pgdata
+    logging:
+      options:
+        max-size: "100K"
   elasticsearch:
     build: podd_elasticsearch
     image: noomz/elasticsearch:1.7
     volumes:
-      - podd_elasticsearch:/usr/share/elasticsearch/data/
+      - podd_elasticsearch:/usr/share/elasticsearch/data/:cached
+    logging:
+      options:
+        max-size: "100K"
   neo4j:
     image: neo4j
     volumes:
-      - podd_neo4j:/data/
+      - podd_neo4j:/data/:cached
     environment:
       - NEO4J_AUTH=none
+    logging:
+      options:
+        max-size: "100K"
 
 volumes:
   podd_postgres:

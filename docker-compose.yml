@@ -2,7 +2,7 @@ version: '2'
 services:
   api:
     build: ${PODD_API_DIR}
-    image: noomz/podd-api:latest
+    image: opendream/openpodd-podd-api
     env_file:
       - ./env/podd_api.sh
     environment:
@@ -24,7 +24,7 @@ services:
       options:
         max-size: "100K"
   celery_worker:
-    image: noomz/podd-api:latest
+    image: opendream/openpodd-podd-api
     command: celery worker -A podd -l INFO -f /usr/src/app/cworker.log
     env_file:
       - ./env/podd_api.sh
@@ -42,7 +42,7 @@ services:
       options:
         max-size: "100K"
   celery_beat:
-    image: noomz/podd-api:latest
+    image: opendream/openpodd-podd-api
     command: celery beat --pidfile= -A podd -l INFO -f /usr/src/app/cbeat.log
     env_file:
       - ./env/podd_api.sh

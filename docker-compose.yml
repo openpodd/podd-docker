@@ -3,6 +3,7 @@ services:
   api:
     build: ${PODD_API_DIR}
     image: opendream/openpodd-podd-api
+    tty: true
     env_file:
       - ./env/podd_api.sh
     environment:

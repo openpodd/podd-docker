@@ -6,6 +6,7 @@ services:
     env_file:
       - ./env/podd_api.sh
     environment:
+      - PYTHONUNBUFFERED=0
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
       - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}
@@ -30,6 +31,7 @@ services:
       - ./env/podd_api.sh
       - ./env/podd_api_celery.sh
     environment:
+      - PYTHONUNBUFFERED=0
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
       - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}
@@ -48,6 +50,7 @@ services:
       - ./env/podd_api.sh
       - ./env/podd_api_celery.sh
     environment:
+      - PYTHONUNBUFFERED=0
       - PODD_DJANGO_SECRET_KEY=${PODD_DJANGO_SECRET_KEY}
       - PODD_RAVEN_DSN=${PODD_RAVEN_DSN}
       - PODD_FIREBASE_CHAT_API_URL=${PODD_FIREBASE_CHAT_API_URL}

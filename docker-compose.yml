@@ -61,7 +61,7 @@ services:
         max-size: "100K"
   cep:
     build: podd_cep/
-    image: noomz/podd-cep:latest
+    image: opendream/openpodd-podd-cep:latest
     logging:
       options:
         max-size: "100K"
@@ -73,28 +73,28 @@ services:
       options:
         max-size: "100K"
   postgres:
-    image: mdillon/postgis
+    image: mdillon/postgis:10
     ports:
       - 5432
     env_file:
       - ./env/postgres.sh
     volumes:
-      - podd_postgres:/var/lib/postgresql/data/pgdata
+      - ./volumes/postgres:/var/lib/postgresql/data/pgdata
     logging:
       options:
         max-size: "100K"
   elasticsearch:
     build: podd_elasticsearch
-    image: noomz/elasticsearch:1.7
+    image: elasticsearch:1.7
     volumes:
-      - podd_elasticsearch:/usr/share/elasticsearch/data/:cached
+      - ./volumes/elasticsearch:/usr/share/elasticsearch/data
     logging:
       options:
         max-size: "100K"
   neo4j:
     image: neo4j
     volumes:
-      - podd_neo4j:/data/:cached
+      - ./volumes/neo4j:/data
     environment:
       - NEO4J_AUTH=none
     logging:

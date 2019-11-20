@@ -3,4 +3,6 @@
 .envset
 envset.sh
 .env
+.envrc
 docker-compose.override.yml
+volumes

@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  api:
+    volumes:
+      - apidata:/usr/src/app:nocopy
+  celery_worker:
+    volumes:
+      - apidata:/usr/src/app:nocopy
+  celery_beat:
+    volumes:
+      - apidata:/usr/src/app:nocopy
+  postgres:
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata:nocopy
+  neo4j:
+    volumes:
+      - neo4jdata:/data:nocopy
+  elasticsearch:
+    volumes:
+      - esdata:/usr/share/elasticsearch/data:nocopy
+
+volumes:
+  apidata:
+    external: true
+  pgdata:
+    external: true
+  neo4jdata:
+    external: true
+  esdata:
+    external: true

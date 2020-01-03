@@ -96,7 +96,7 @@ services:
       options:
         max-size: "100K"
   neo4j:
-    image: neo4j
+    image: neo4j:2.3.12
     volumes:
       - ./volumes/neo4j:/data
     environment:

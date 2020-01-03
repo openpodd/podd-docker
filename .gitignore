@@ -6,3 +6,4 @@ envset.sh
 .envrc
 docker-compose.override.yml
 volumes
+volumes.*

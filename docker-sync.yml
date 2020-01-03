@@ -1,0 +1,11 @@
+version: '2'
+
+syncs:
+  apidata:
+    src: '${PODD_API_DIR}'
+  pgdata:
+    src: './volumes/postgres'
+  neo4jdata:
+    src: './volumes/neo4j'
+  esdata:
+    src: './volumes/elasticsearch'

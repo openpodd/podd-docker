@@ -7,3 +7,4 @@ envset.sh
 docker-compose.override.yml
 volumes
 volumes.*
+.docker-sync
